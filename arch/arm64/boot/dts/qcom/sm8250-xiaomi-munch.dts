@@ -1,6 +1,6 @@
-// SPDX-Identifier: GPL-2.0-only OR BSD-2-Clause
+// SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 /*
- * Copyright (c) 2023 Luka msumro
+ * Copyright (c) 2023 Luka Panio <lukapanio@gmail.com>
  */
 
 /dts-v1/;
@@ -25,12 +25,27 @@
 
 
 / {
-    	#model = "Qualcomm Technologies, Inc. Xiaomi Munch";
-    	#compatible = "qcom,kona";
-    	qcom,msm-id = <0x164 0x20001>;
+    	model = "Xiaomi POCO F4";
+    	compatible = "xiaomi,kona", "qcom,sm8250";
+    	
+    	/* required for bootloader to select correct board */
+    	qcom,msm-id = <QCOM_ID_SM8250 0x20001>; /* SM8250 v2.1 */
     	qcom,board-id = <0x32 0x00>;
 
-	
+	chosen {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+
+		framebuffer: framebuffer@9c000000 {
+			compatible = "simple-framebuffer";
+			reg = <0x0 0x9c000000 0x0 0x2300000>;
+			width = <1080>;
+			height = <2400>;
+			stride = <(1080 * 4)>;
+			format = "a8r8g8b8";
+		};
+	};
 
 	vph_pwr: vph-pwr-regulator {
 		compatible = "regulator-fixed";
@@ -48,23 +63,8 @@
 		regulator-always-on;
 		vin-supply = <&vph_pwr>;
 	};
-	
-	chosen {
-		#address-cells = <2>;
-		#size-cells = <2>;
-		ranges;
 
-		framebuffer: framebuffer@9c000000 {
-			compatible = "simple-framebuffer";
-			reg = <0x0 0x9c000000 0x0 0x2400000>;
-			width = <1080>;
-			height = <2400>;
-			stride = <(1080 * 4)>;
-			format = "a8r8g8b8";
-		};
-	};
-
-    	reserved-memory {
+	reserved-memory {
 		xbl_aop_mem: xbl-aop@80700000 {
 			reg = <0x0 0x80600000 0x0 0x260000>;
 			no-map;
@@ -89,6 +89,10 @@
 			reg = <0x0 0x8e100000 0x0 0x4600000>;
 			no-map;
 		};
+		cont_splash_mem: cont-splash@9c000000 {
+			reg = <0x0 0x9c000000 0x0 0x2300000>;
+			no-map;
+		};
 		ramoops@b0000000 {
 			compatible = "ramoops";
 			reg = <0x0 0xb0000000 0x0 0x400000>;
@@ -96,10 +100,6 @@
 			console-size = <0x200000>;
 			pmsg-size = <0x200000>;
 			max-reason = <5>;
-		};
-		cont_splash_mem: cont-splash@9c000000 {
-			reg = <0x0 0x9c000000 0x0 0x2400000>;
-			no-map;
 		};
 	};
 };
@@ -290,7 +290,7 @@
 			regulator-min-microvolt = <1200000>;
 			regulator-max-microvolt = <1400000>;
 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-		};
+		}; 
 
 		vreg_l1c_1p8: ldo1 {
 			regulator-name = "vreg_l1c_1p8";
@@ -380,17 +380,17 @@
 };
 
 &ufs_mem_hc {
-	vcc-supply = <&vreg_l17a_3p0>;
-	vcc-max-microamp = <800000>;
-	vccq-supply = <&vreg_l6a_1p2>;
-	vccq-max-microamp = <800000>;
-	vccq2-supply = <&vreg_s4a_1p8>;
-	vccq2-max-microamp = <800000>;
-	status = "okay";
+       vcc-supply = <&vreg_l17a_3p0>;
+       vcc-max-microamp = <800000>;
+       vccq-supply = <&vreg_l6a_1p2>;
+       vccq-max-microamp = <800000>;
+       vccq2-supply = <&vreg_s4a_1p8>;
+       vccq2-max-microamp = <800000>;
+       status = "okay";
 };
 
 &ufs_mem_phy {
-	vdda-phy-supply = <&vreg_l5a_0p88>;
-	vdda-pll-supply = <&vreg_l9a_1p2>;
-	status = "okay";
+       vdda-phy-supply = <&vreg_l5a_0p88>;
+       vdda-pll-supply = <&vreg_l9a_1p2>;
+       status = "okay";
 };
